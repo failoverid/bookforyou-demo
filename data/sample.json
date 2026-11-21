@@ -1,0 +1,155 @@
+{
+  "vocab": [
+    "betrayal",
+    "chosen one",
+    "coming of age",
+    "dark academia",
+    "detective",
+    "dragon",
+    "enemies to lovers",
+    "fantasy",
+    "forbidden love",
+    "found family",
+    "magic school",
+    "murder",
+    "mystery",
+    "revenge",
+    "romance",
+    "royal court",
+    "science fiction",
+    "slow burn",
+    "thriller",
+    "time travel",
+    "unreliable narrator",
+    "war",
+    "witch",
+    "young adult"
+  ],
+  "status_tags": [
+    "currently-reading",
+    "default",
+    "favorites",
+    "kindle",
+    "owned",
+    "read",
+    "to-read"
+  ],
+  "keep_plural": [
+    "enemies to lovers"
+  ],
+  "query_books": {
+    "Q1": {
+      "synopsis": "<p>Fourteen-year-old orphan Elara learns she is <b>the chosen one</b> and is sent to a hidden magic school. Her rival, a proud prince, slowly becomes her ally as a slow burn romance grows, while a dragon threatens the royal court.</p>",
+      "tags": [
+        "to-read",
+        "fantasy",
+        "Magic-School",
+        "chosen-one",
+        "enemies-to-lovers",
+        "slow-burn",
+        "dragons",
+        "young-adult",
+        "favorites"
+      ],
+      "t_q": [
+        "chosen one",
+        "dragon",
+        "enemies to lovers",
+        "magic school",
+        "slow burn"
+      ]
+    },
+    "Q2": {
+      "synopsis": "Two sworn enemies from rival houses are forced to share a throne. Amid betrayal &amp; intrigue, a found family of exiles helps them survive, and hatred turns to love.",
+      "tags": [
+        "kindle",
+        "fantasy",
+        "romance",
+        "enemies-to-lovers",
+        "found-families",
+        "royal-court",
+        "betrayal",
+        "slow-burn",
+        "mystery-thriller"
+      ],
+      "t_q": [
+        "betrayal",
+        "enemies to lovers",
+        "found family",
+        "royal court"
+      ]
+    }
+  },
+  "catalog": {
+    "A": {
+      "title": "The Quiet Detective of Vael",
+      "synopsis": "A retired detective investigates a murder inside a royal court, where every courtier hides a secret and a betrayal waits behind each door.",
+      "tags": [
+        "to-read",
+        "royal-court",
+        "betrayal",
+        "mystery",
+        "detective",
+        "murder",
+        "kindle"
+      ],
+      "popular": false
+    },
+    "B": {
+      "title": "Dragon Rider Academy",
+      "synopsis": "A young mage enrolls at an academy for dragon riders, where a rival prince challenges her at every turn. The rivalry softens into a slow burn romance as an ancient dragon wakes beneath the school.",
+      "tags": [
+        "to-read",
+        "Dragons",
+        "fantasy",
+        "young-adult",
+        "war",
+        "witches"
+      ],
+      "popular": false
+    },
+    "C": {
+      "title": "The Hollow Crown",
+      "synopsis": "Two rival heirs are bound by a treaty marriage and must rule together. Betrayal stalks the royal court, and a found family of exiles gives them a reason to trust each other.",
+      "tags": [
+        "favorites",
+        "royal-court",
+        "enemies-to-lovers",
+        "found-families",
+        "betrayal",
+        "fantasy",
+        "romance",
+        "mystery-thriller"
+      ],
+      "popular": false
+    },
+    "D": {
+      "title": "Chosen of the Storm",
+      "synopsis": "An orphan farm girl is named the chosen one by a prophecy and trains at a school of storm magic. A dragon-hunting prince opposes her, but a slow burn alliance forms.",
+      "tags": [
+        "chosen-one",
+        "magic-school",
+        "slow-burn",
+        "dragons",
+        "enemies-to-lovers",
+        "fantasy",
+        "young-adult"
+      ],
+      "popular": true
+    },
+    "E": {
+      "title": "Summer of the Island Witch",
+      "synopsis": "A teenage witch spends the summer on a quiet island, befriends a young dragon, and finds a gentle romance that takes its time to bloom.",
+      "tags": [
+        "witches",
+        "dragons",
+        "slow-burn",
+        "fantasy",
+        "young-adult",
+        "romance",
+        "to-read"
+      ],
+      "popular": true
+    }
+  }
+}
