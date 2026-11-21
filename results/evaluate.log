@@ -1,0 +1,109 @@
+catalog: 22656 books, 150 tags
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|##########| 103/103 [00:00<00:00, 1848.91it/s]
+embedding 0 / 22656
+embedding 6400 / 22656
+embedding 12800 / 22656
+embedding 19200 / 22656
+held-out queries available in catalog: 4453
+queries with at least one relevant book: 1000 / 1000
+validation 500 / test 500
+Loading weights:   0%|          | 0/260 [00:00<?, ?it/s]Loading weights:   3%|3         | 9/260 [00:00<00:03, 78.23it/s]Loading weights:   7%|6         | 17/260 [00:00<00:04, 53.51it/s]Loading weights:   9%|8         | 23/260 [00:00<00:04, 52.69it/s]Loading weights:  11%|#1        | 29/260 [00:00<00:04, 47.25it/s]Loading weights:  13%|#3        | 34/260 [00:00<00:07, 29.09it/s]Loading weights: 100%|##########| 260/260 [00:00<00:00, 283.50it/s]
+BART 32 / 1000
+BART 64 / 1000
+BART 96 / 1000
+BART 128 / 1000
+BART 160 / 1000
+BART 192 / 1000
+BART 224 / 1000
+BART 256 / 1000
+BART 288 / 1000
+BART 320 / 1000
+BART 352 / 1000
+BART 384 / 1000
+BART 416 / 1000
+BART 448 / 1000
+BART 480 / 1000
+BART 512 / 1000
+BART 544 / 1000
+BART 576 / 1000
+BART 608 / 1000
+BART 640 / 1000
+BART 672 / 1000
+BART 704 / 1000
+BART 736 / 1000
+BART 768 / 1000
+BART 800 / 1000
+BART 832 / 1000
+BART 864 / 1000
+BART 896 / 1000
+BART 928 / 1000
+BART 960 / 1000
+BART 992 / 1000
+BART 1000 / 1000
+avg tags/query 6.84, hallucination rate 0.09%
+Loading weights:   0%|          | 0/105 [00:00<?, ?it/s]Loading weights: 100%|##########| 105/105 [00:00<00:00, 1607.04it/s]
+candidate pools ready
+lambda sweep (validation NDCG@10): {0.0: 0.762, 0.1: 0.762, 0.2: 0.762, 0.3: 0.762, 0.4: 0.762, 0.5: 0.762, 0.6: 0.762, 0.7: 0.759, 0.8: 0.749, 0.9: 0.69, 1.0: 0.516}
+selected lambda=0.6, mu=0.5
+# Evaluasi lengkap BookForYou
+
+Katalog 22656 buku, 150 tag. Query diambil dari split held-out BART; validasi 500 / test 500 query. Relevan jika berbagi >= 5 tag asli. Metrik pada K = 10, pool SBERT = 100.
+
+Tag per query rata-rata 6.84, hallucination rate 0.09%.
+
+## Tabel utama (test)
+
+| Sistem | NDCG@10 [95% CI] | MRR | P@10 | Serendipity | Trope Match |
+|---|---|---|---|---|---|
+| Popularity | 0.581 [0.552, 0.612] | 0.743 | 0.562 | 0.274 | - |
+| TF-IDF | 0.463 [0.434, 0.490] | 0.640 | 0.449 | 0.422 | - |
+| BM25 | 0.537 [0.510, 0.565] | 0.721 | 0.518 | 0.484 | - |
+| Cross-Encoder | 0.523 [0.496, 0.551] | 0.695 | 0.511 | 0.477 | - |
+| SBERT-Only | 0.530 [0.499, 0.557] | 0.701 | 0.517 | 0.486 | - |
+| SBERT+BM25 Fusion | 0.577 [0.550, 0.604] | 0.748 | 0.561 | 0.523 | - |
+| Trope-Only | 0.788 [0.762, 0.815] | 0.862 | 0.780 | 0.713 | 0.996 |
+| Hybrid (lambda=0.6) | 0.788 [0.760, 0.815] | 0.862 | 0.780 | 0.713 | 0.996 |
+
+## Uji signifikansi (Wilcoxon dua sisi, Hybrid vs sistem lain, NDCG@10)
+
+| Pembanding | selisih rata-rata | p |
+|---|---|---|
+| Popularity | +0.207 | 0.0000 |
+| TF-IDF | +0.324 | 0.0000 |
+| BM25 | +0.251 | 0.0000 |
+| Cross-Encoder | +0.264 | 0.0000 |
+| SBERT-Only | +0.257 | 0.0000 |
+| SBERT+BM25 Fusion | +0.211 | 0.0000 |
+| Trope-Only | -0.001 | 0.7655 |
+
+## Kontribusi ATO vs SBERT
+
+- NDCG@10: SBERT-only 0.5303, Trope-only 0.7885, Hybrid 0.7875
+- Kenaikan total (Hybrid - SBERT-only) = 0.2572
+- Porsi ATO = (Trope-only - SBERT-only) / total = 100.4%
+- Porsi SBERT (tiebreaker) = (Hybrid - Trope-only) / total = -0.4%
+
+## Sensitivitas lambda (validasi, NDCG@10)
+
+| lambda | 0.0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1.0 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| NDCG | 0.762 | 0.762 | 0.762 | 0.762 | 0.762 | 0.762 | 0.762 | 0.759 | 0.749 | 0.690 | 0.516 |
+
+lambda terpilih = 0.6; mu SBERT+BM25 terpilih = 0.5.
+
+## Ambang relevansi (test, NDCG@10)
+
+| Ambang | SBERT-Only | Trope-Only | Hybrid | Trope - SBERT |
+|---|---|---|---|---|
+| 5 | 0.530 | 0.788 | 0.788 | +0.258 |
+| 6 | 0.457 | 0.730 | 0.728 | +0.273 |
+| 7 | 0.388 | 0.675 | 0.673 | +0.287 |
+| 8 | 0.330 | 0.608 | 0.608 | +0.278 |
+| 9 | 0.293 | 0.552 | 0.552 | +0.259 |
+| 10 | 0.245 | 0.494 | 0.495 | +0.249 |
+
+## Catatan
+
+- Relevansi berasal dari tag komunitas, bukan rating atau penilaian pembaca. Tag yang sama dipakai ATO untuk meranking, jadi NDCG sistem trope cenderung tinggi.
+- Vector search memakai perkalian matriks eksak (numpy), bukan Qdrant; hasilnya sama untuk top-100.
+- Popularitas = jumlah rating Goodreads; buku populer = 1.000 teratas di katalog.

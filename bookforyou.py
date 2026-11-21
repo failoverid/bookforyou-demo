@@ -19,6 +19,9 @@ import sys
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 import torch
+
+import tags as tags_mod
+from tags import clean_synopsis
 from transformers import AutoModel, AutoTokenizer
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -55,51 +58,9 @@ def bart_tags(synopsis, top_n=5):
     return set(out["labels"][:top_n])  # labels come sorted by score
 
 
-# --- preprocessing: synopsis -----------------------------------------------------------------
-def clean_synopsis(text):
-    text = html.unescape(re.sub(r"<[^>]+>", " ", text))       # strip HTML, decode &amp;
-    text = re.sub(r"[^a-z0-9\s'-]", " ", text.lower())         # drop symbols, lowercase
-    return re.sub(r"\s+", " ", text).strip()
-
-
-# --- preprocessing: community tags (4 stages, same order as the paper) ------------------------
-def singular_word(w):
-    if len(w) > 4 and w.endswith("ies"):
-        return w[:-3] + "y"
-    if re.search(r"(ss|us|is)$", w):
-        return w
-    if re.search(r"(ch|sh|x|z)es$", w):
-        return w[:-2]
-    return w[:-1] if w.endswith("s") else w
-
-
-def stage3_singular(tags):
-    out = []
-    for t in tags:
-        keep = re.sub(r"[^a-z]+", " ", t).strip() in KEEP_PLURAL
-        out.append(t if keep else re.sub(r"[a-z]+$", lambda m: singular_word(m.group()), t))
-    return out
-
-
-def stage4_chars(tags):
-    return [re.sub(r"[^a-z0-9]+", " ", t).strip() for t in tags]
-
-
-def stage2_split(tags):
-    out = []
-    for t in tags:
-        legit = stage4_chars(stage3_singular([t]))[0] in VOCAB  # science-fiction stays, mystery-thriller splits
-        out += [t] if "-" not in t or legit else t.split("-")
-    return out
-
-
+# --- preprocessing: synopsis and community tags live in tags.py ---------------------------------
 def curate(raw):
-    s1 = [t.lower() for t in raw if t.lower() not in STATUS_TAGS]
-    s2 = stage2_split(s1)
-    s3 = stage3_singular(s2)
-    s4 = stage4_chars(s3)
-    final = sorted({t for t in s4 if t in VOCAB})
-    return s1, s2, s3, s4, final
+    return tags_mod.curate(raw, VOCAB, STATUS_TAGS, KEEP_PLURAL)
 
 
 # --- SBERT: token embeddings -> mean pooling -> L2 norm -> cosine ----------------------------
