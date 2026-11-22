@@ -16,7 +16,7 @@ python bookforyou.py > hasil_bookforyou.md
 
 Mencetak 6 bagian: metode, input, preprocessing, perhitungan, hasil rekomendasi, evaluasi. Data ada di
 `data/sample.json` (tulisan tangan, bisa diubah). Opsi: `--bart zeroshot` (BART zero-shot, unduh sekitar 1,6 GB),
-`--data FILE`, `--k N`. Hasil contoh: `hasil_bookforyou.md` dan `hasil_bart_zeroshot.md`.
+`--data FILE`, `--k N`, `--lam X` (bobot SBERT, ATO mendapat 1 - X). Hasil contoh: `hasil_bookforyou.md` dan `hasil_bart_zeroshot.md`.
 
 ## 2. Pipeline penuh (data Goodreads, fine-tune BART, evaluasi 8 sistem)
 
@@ -30,6 +30,7 @@ done
 python prepare_data.py          # kurasi tag 4 tahap, kamus 150 trope, katalog, split 80/20 seed 42
 python finetune_bart.py         # Stage 1a: fine-tune bart-base (butuh GPU, ~6 GB cukup)
 python evaluate.py              # Stage 1b + 2 dan evaluasi leave-one-out, tulis results/eval.md
+                                # lambda dipilih otomatis di validasi; paksa dengan --lam 0.5
 ```
 
 | File | Isi |

@@ -104,14 +104,18 @@ def table(head, rows):
 
 
 def main():
+    global LAMBDA
     ap = argparse.ArgumentParser(description="BookForYou worked example")
     ap.add_argument("--data", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "sample.json"))
     ap.add_argument("--bart", choices=["given", "zeroshot"], default="given",
                     help="given: use t_q from the data file; zeroshot: extract with BART (downloads ~1.6 GB once)")
     ap.add_argument("--k", type=int, default=K)
+    ap.add_argument("--lam", type=float, default=LAMBDA, help="weight of SBERT in the fusion (ATO gets 1 - lam)")
     args = ap.parse_args()
     load_data(args.data)
     k = args.k
+    LAMBDA = args.lam
+    assert 0 <= LAMBDA <= 1, "--lam must be between 0 and 1"
     if args.bart == "zeroshot":
         for d in QUERY_BOOKS.values():
             d["t_q"] = bart_tags(d["synopsis"])
@@ -120,7 +124,7 @@ def main():
     print("## 1. Proposed Method\n")
     print("- **Stage 1a (BART-base, 139M)**: sinopsis query -> himpunan tag trope T_q.")
     print("- **Stage 1b (SBERT all-MiniLM-L6-v2, 384-d)**: sinopsis query -> vektor -> kandidat terdekat (paper: top-100 dari 42.350 buku, di sini 5 buku).")
-    print("- **Stage 2 (late fusion)**: Score(b) = lambda * SBERT(q,b) + (1 - lambda) * ATO(T_q,T_b), ATO = |T_q ∩ T_b| / |T_q|, lambda = 0,5.")
+    print(f"- **Stage 2 (late fusion)**: Score(b) = lambda * SBERT(q,b) + (1 - lambda) * ATO(T_q,T_b), ATO = |T_q ∩ T_b| / |T_q|, lambda = {LAMBDA:g}.")
     print("- Catatan: " + ("Stage 1a memakai BART zero-shot (bart-large-mnli) yang memilih trope dari kamus; paper memakai bart-base hasil fine-tune yang checkpoint-nya tidak tersedia."
           if args.bart == "zeroshot" else "Stage 1a memakai T_q dari file data (checkpoint BART hasil fine-tune paper tidak tersedia; jalankan dengan --bart zeroshot untuk BART asli).")
           + " Stage 1b dan 2 dijalankan dengan model asli.\n")
@@ -179,10 +183,10 @@ def main():
     pool = sorted(CATALOG, key=lambda b: -sbert[b])
     print(f"Urutan kandidat dari retrieval SBERT: {pool}\n")
 
-    print("**Stage 2: ATO dan Late Fusion** (lambda = 0,5)\n")
+    print(f"**Stage 2: ATO dan Late Fusion** (lambda = {LAMBDA:g})\n")
     ato = {b: len(t_q & tags[b]) / len(t_q) for b in CATALOG}
     score = {b: LAMBDA * sbert[b] + (1 - LAMBDA) * ato[b] for b in CATALOG}
-    table(["Buku", "T_q ∩ T_b", "ATO", "0,5 x SBERT", "0,5 x ATO", "Skor akhir"],
+    table(["Buku", "T_q ∩ T_b", "ATO", f"{LAMBDA:g} x SBERT", f"{1 - LAMBDA:g} x ATO", "Skor akhir"],
           [(b, f"{len(t_q & tags[b])}/{len(t_q)}", f"{ato[b]:.3f}", f"{LAMBDA * sbert[b]:.4f}",
             f"{(1 - LAMBDA) * ato[b]:.4f}", f"{score[b]:.4f}") for b in pool])
 
@@ -214,7 +218,7 @@ def main():
 
     systems = {"SBERT-only (lambda=1)": pool,
                "Trope-only (lambda=0)": sorted(pool, key=lambda b: -ato[b]),  # stable: ties keep SBERT retrieval order
-               "Hybrid (lambda=0,5)": hybrid}
+               f"Hybrid (lambda={LAMBDA:g})": hybrid}
     pop = {b: CATALOG[b]["popular"] for b in CATALOG}
     res = {n: metrics(o, rel, pop, t_q, tags, k) for n, o in systems.items()}
 
@@ -222,7 +226,7 @@ def main():
     r = [rel[b] for b in hybrid]
     table(["Rank i", "Buku", "rel_i", "rel_i / log2(i+1)"],
           [(i, hybrid[i - 1], r[i - 1], f"{r[i - 1] / math.log2(i + 1):.4f}") for i in range(1, k + 1)])
-    m = res["Hybrid (lambda=0,5)"]
+    m = res[f"Hybrid (lambda={LAMBDA:g})"]
     ideal = sorted(rel.values(), reverse=True)[:k]
     print(f"- Precision@{k} = {sum(r[:k])}/{k} = {m['p']:.3f}")
     print(f"- MRR = 1/(rank relevan pertama) = {m['mrr']:.3f}")

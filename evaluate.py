@@ -24,6 +24,7 @@ ap.add_argument("--queries", type=int, default=1000)
 ap.add_argument("--k", type=int, default=10)
 ap.add_argument("--pool", type=int, default=100)
 ap.add_argument("--thr", type=int, default=5, help="relevant if >= thr shared tags")
+ap.add_argument("--lam", type=float, default=None, help="fix lambda instead of choosing it on the validation half")
 ap.add_argument("--no-cross", action="store_true", help="skip the cross-encoder baseline")
 args = ap.parse_args()
 K, POOL, THR = args.k, args.pool, args.thr
@@ -232,7 +233,7 @@ lam_ndcg = {}
 for lam in lams:
     ms = [metrics(order_by(lam * D[q]["s"] + (1 - lam) * D[q]["ato"], D[q]["pool"])[:K], q)["ndcg"] for q in val]
     lam_ndcg[lam] = float(np.mean(ms))
-best_lam = max(lam_ndcg, key=lam_ndcg.get)
+best_lam = max(lam_ndcg, key=lam_ndcg.get) if args.lam is None else args.lam
 mu_ndcg = {}
 for mu in lams:
     ms = [metrics(order_by(mu * D[q]["s"] + (1 - mu) * minmax(D[q]["bm"][D[q]["pool"]]), D[q]["pool"])[:K], q)["ndcg"] for q in val]
